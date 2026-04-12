@@ -1,1 +1,19 @@
+# Schema
+pydantic
+PyYAML
+
+# Machine Learning
+numpy==1.26.4
 scikit-learn
+matplotlib
+
+# Deep Learning
+tensorflow
+
+# Logging
+colorama
+loguru
+tqdm
+
+# Interactive Notebook
+ipykernel
