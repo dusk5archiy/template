@@ -1,17 +1,14 @@
 from src.models.shared.base import BaseAIModel, ImageClassificationDsInfo
-
-from pydantic import validate_call
 import keras
 import tensorflow as tf
 
 
-class Resnet(BaseAIModel):
+class Mobilenet(BaseAIModel):
     class Config(BaseAIModel.Config, ImageClassificationDsInfo):
         dense_dim: int = 64
         dropout: float = 0.5
         activation: str = "swish"
 
-    @validate_call()
     def __init__(self, config: Config):
         x = inp = tf.keras.layers.Input(
             shape=(
@@ -22,9 +19,10 @@ class Resnet(BaseAIModel):
         )
         if config.num_channels == 1:
             x = tf.keras.layers.Concatenate(axis=-1)([x, x, x])
-        x = tf.keras.applications.resnet.preprocess_input(x)
 
-        base_model = keras.applications.ResNet50V2(
+        x = tf.keras.applications.mobilenet_v3.preprocess_input(x)
+
+        base_model = keras.applications.MobileNetV3Small(
             include_top=False,
             pooling="avg",
         )

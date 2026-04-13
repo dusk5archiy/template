@@ -37,7 +37,8 @@ def load_model(
     model_name: str,
     ds_info: BaseModel,
 ):
-    from src.models.resnet import Resnet
+    from src.models import CUSTOM_OBJECTS
+
     with open("config/models.yml", encoding="utf-8") as f:
         c = yaml.safe_load(f)[model_name]
     c = ModelInfo(**c)
@@ -47,9 +48,8 @@ def load_model(
             "module": c.module,
             "class_name": c.class_name,
             "config": config,
-        }, custom_objects={
-            "Resnet": Resnet
-        }
+        },
+        custom_objects=CUSTOM_OBJECTS,
     )
     return model
 
@@ -59,7 +59,7 @@ def load_model(
 
 class ImageProcessingDsInfo(BaseModel):
     colored: bool
-    image_resolution: tuple[int, int] # W x H
+    image_resolution: tuple[int, int]  # W x H
 
     @property
     def num_channels(self):
@@ -69,7 +69,9 @@ class ImageProcessingDsInfo(BaseModel):
 class ClassificationDsInfo(BaseModel):
     num_classes: int
 
+
 class ImageClassificationDsInfo(ImageProcessingDsInfo, ClassificationDsInfo):
     pass
+
 
 # -----------------------------------------------------------------------------

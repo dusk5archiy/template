@@ -21,19 +21,19 @@ class TaskArgParser:
 
     def get_action(self, args: argparse.Namespace) -> Callable[[], None]:
         from src.task.train import train
-        
+
         # Return action based on mode
         if args.mode == "train":
             return lambda: train(
                 model_name=args.model_name,
                 batch_size=args.batch_size,
-                epochs=args.epochs
+                epochs=args.epochs,
             )
-        # elif args.mode == "eval":
-        #     from src.task.eval import evaluate_asl
-        #     return lambda: evaluate_asl(
-        #         model_path=args.model_path,
-        #         config=self.config,
-        #     )
+        elif args.mode == "eval":
+            from src.task.eval import evaluate
+
+            return lambda: evaluate(
+                model_path=args.model_path,
+            )
 
         return lambda: None

@@ -2,3 +2,8 @@ resnet:
   module: src.models.resnet
   class_name: Resnet
   config:
+
+mobilenet:
+  module: src.models.mobilenet
+  class_name: Mobilenet
+  config:
