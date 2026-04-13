@@ -115,5 +115,5 @@ def evaluate(model_path: str):
     # Write metrics to YAML
     yml_path = f"{output_dir}/eval-{ext}.yml"
     with open(yml_path, "w") as f:
-        yaml.dump(metrics, f, default_flow_style=False)
+        yaml.dump(metrics, f, default_flow_style=False, sort_keys=False)
     logger.info(f"Evaluation metrics saved to {yml_path}")
