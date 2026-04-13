@@ -10,6 +10,5 @@ def _setup():
 
 
 _setup()
-del _setup
 
-from yaml import *  # pyright: ignore[reportWildcardImportFromLibrary]
+from yaml import *  # pyright: ignore[reportWildcardImportFromLibrary] # noqa: F403, E402

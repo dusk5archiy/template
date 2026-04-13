@@ -7,3 +7,10 @@
 
 # AI
 /dataset
+
+# Commands
+/cmd/*
+!/cmd/*.example.sh
+
+# Git Keep
+!/**/.gitkeep
