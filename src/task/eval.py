@@ -25,7 +25,8 @@ def evaluate(model_path: str):
     logger.info("Loading validation dataset...")
 
     full_ds = Mnist(config=Mnist.Config())
-    val_ds = full_ds.get_dataset(split="test", args=Mnist.SplitArgs(batch_size=1))
+    batch_size = 16
+    val_ds = full_ds.get_dataset(split="test", args=Mnist.SplitArgs(batch_size=batch_size))
 
     # Calculate precision, recall, and F1 score on validation set
     # Get model name from path
@@ -37,20 +38,26 @@ def evaluate(model_path: str):
     all_predictions = []
     inference_times = []  # Store inference times for average calculation
 
-    # For visualization: store first 8 images
     viz_images = []
     viz_data = {"img_count": 0}
 
     processed_samples = 0
     total_inference_time = 0.0
 
+    rows = 4
+    cols = 4
+
+    n_samples = rows * cols
+
     with tqdm(total=len(val_ds), desc="Evaluating", unit="sample") as pbar:
         for batch_images, batch_labels in val_ds:
-            for img, lbl in zip(batch_images, batch_labels):
+            start_time = time.perf_counter()
+            preds = evaluator(batch_images)
+            end_time = time.perf_counter()
+            for img, lbl, pred in zip(batch_images, batch_labels, preds):
+                pred = int(pred)
                 lbl = int(lbl)
-                start_time = time.perf_counter()
-                pred = evaluator(img)
-                end_time = time.perf_counter()
+                
                 elapsed = end_time - start_time
                 inference_times.append(elapsed)
 
@@ -58,11 +65,10 @@ def evaluate(model_path: str):
                 all_true_labels.append(lbl)
 
                 # Capture for visualization after inference
-                if viz_data["img_count"] < 8:
-                    img_display = (img.numpy() * 255).astype(np.uint8)
+                if viz_data["img_count"] < n_samples:
                     viz_images.append(
                         {
-                            "img": img_display,
+                            "img": img.numpy(),
                             "actual": lbl,
                             "predicted": pred,
                         }
@@ -76,13 +82,19 @@ def evaluate(model_path: str):
                     if processed_samples
                     else 0.0
                 )
-                pbar.update(1)
+
                 pbar.set_postfix(
                     avg_inf_ms=f"{avg_inference_time * 1000:.2f}",
                     last_sample_ms=f"{elapsed * 1000:.2f}",
                 )
+            pbar.update(1)
 
-    plot_evaluation_results(path_base=f"{output_dir}/eval-{ext}", viz_images=viz_images)
+    plot_evaluation_results(
+        path_base=f"{output_dir}/eval-{ext}",
+        viz_images=viz_images,
+        rows=rows,
+        cols=cols
+    )
 
     # Create metrics dict
     avg_inference_time = np.mean(inference_times) if inference_times else 0.0

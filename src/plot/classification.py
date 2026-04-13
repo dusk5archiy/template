@@ -1,7 +1,6 @@
 from src.backend import plt
 from src.backend.logging import logger
 from typing import Any
-from matplotlib.patches import Rectangle
 
 # =============================================================================
 
@@ -70,23 +69,34 @@ def plot_classification_training_history(
     plt.close()
     logger.success(f"Training history plot saved to {filename}")
 
+
 # =============================================================================
 
-def plot_evaluation_results(path_base: str, viz_images: list, file_extension: str="png"):
-    # Generate visualization of first 8 images
+
+def plot_evaluation_results(
+    path_base: str,
+    viz_images: list,
+    rows: int = 4,
+    cols: int = 2,
+    file_extension: str = "png",
+):
     if len(viz_images) == 0:
         return
-    rows, cols = 4, 2
-    fig, axes = plt.subplots(rows, cols, figsize=(12, 16), dpi=80)
+    _, axes = plt.subplots(rows, cols, figsize=(12, 16), dpi=80)
     axes = axes.flatten()
 
     for idx, data in enumerate(viz_images):
         ax = axes[idx]
-        ax.imshow(
-            data["img"].squeeze(),
-            cmap="gray" if data["img"].shape[-1] == 1 else None,
-            vmin=0, vmax=255,
-        )
+        img = data["img"].squeeze()
+        if len(img.shape) == 2 or img.shape[-1] == 1:
+            ax.imshow(
+                img,
+                cmap="gray",
+                vmin=0,
+                vmax=255,
+            )
+        else:
+            ax.imshow(img, vmin=0, vmax=255)
 
         # Add text overlay with predicted and actual values
         pred_text = f"Pred: {data['predicted']}"
@@ -122,33 +132,6 @@ def plot_evaluation_results(path_base: str, viz_images: list, file_extension: st
     # Hide unused subplots
     for i in range(len(viz_images), rows * cols):
         axes[i].axis("off")
-
-    # Add legend
-    legend_elements = [
-        Rectangle(
-            (0, 0),
-            1,
-            1,
-            facecolor="white",
-            edgecolor="green",
-            label="Correct Prediction",
-        ),
-        Rectangle(
-            (0, 0),
-            1,
-            1,
-            facecolor="white",
-            edgecolor="red",
-            label="Wrong Prediction",
-        ),
-    ]
-    fig.legend(
-        handles=legend_elements,
-        loc="upper center",
-        bbox_to_anchor=(0.5, 0.98),
-        ncol=2,
-        fontsize=12,
-    )
 
     # Save visualization
     viz_path = f"{path_base}.{file_extension}"

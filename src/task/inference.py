@@ -12,13 +12,12 @@ class DotKerasInference:
 
     @tf.function(reduce_retracing=True)
     def _inference(self, x):
-        x = x[None, ...]
         return self.model(x, training=False)
 
     def __call__(self, x):
         pred = self._inference(x)
-        class_idx = int(np.argmax(pred[0]))
-        return class_idx
+        class_indices = np.argmax(pred, axis=1)
+        return class_indices
 
 
 class DotTfliteInference:
@@ -29,10 +28,6 @@ class DotTfliteInference:
         self.output_details = self.interpreter.get_output_details()
 
     def _inference(self, x):
-        x = x[
-            None,
-            ...,
-        ]
         self.interpreter.set_tensor(self.input_details[0]["index"], x)
         self.interpreter.invoke()
         pred = self.interpreter.get_tensor(self.output_details[0]["index"])
@@ -40,6 +35,6 @@ class DotTfliteInference:
 
     def __call__(self, x):
         pred = self._inference(x)
-        class_idx = int(np.argmax(pred[0]))
-        return class_idx
+        class_indices = np.argmax(pred, axis=1)
+        return class_indices
 
