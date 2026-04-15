@@ -1,15 +1,13 @@
-from src.models.shared.base import BaseAIModel, ImageClassificationDsInfo
-
+from src.models.shared.base import BaseAIModel
+from src.models.shared.dataset_info import ImageClassificationDsInfo
+from src.models.shared.heads import classify, ClassifyArgs
 from pydantic import validate_call
-import keras
-import tensorflow as tf
+from src.backend import tf, keras
 
 
 class Resnet(BaseAIModel):
     class Config(BaseAIModel.Config, ImageClassificationDsInfo):
-        dense_dim: int = 64
-        dropout: float = 0.5
-        activation: str = "swish"
+        classify: ClassifyArgs = ClassifyArgs()
 
     @validate_call()
     def __init__(self, config: Config):
@@ -29,9 +27,11 @@ class Resnet(BaseAIModel):
             pooling="avg",
         )
         x = base_model(x)
-        x = tf.keras.layers.Dense(config.dense_dim, activation=config.activation)(x)
-        x = tf.keras.layers.Dropout(config.dropout)(x)
-        x = tf.keras.layers.Dense(config.num_classes, activation="softmax")(x)
+        x = classify(
+            x,
+            n_classes=config.num_classes,
+            args=config.classify,
+        )
 
         tf.keras.Model.__init__(self, inputs=inp, outputs=x)
         BaseAIModel.__init__(self, config)

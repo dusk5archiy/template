@@ -67,7 +67,7 @@ def plot_classification_training_history(
     plt.tight_layout()
     plt.savefig(filename, dpi=300, bbox_inches="tight")
     plt.close()
-    logger.success(f"Training history plot saved to {filename}")
+    logger.info(f"Training history plot saved to {filename}")
 
 
 # =============================================================================

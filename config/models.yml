@@ -1,9 +1,11 @@
 resnet:
   module: src.models.resnet
   class_name: Resnet
-  config:
 
 mobilenet:
   module: src.models.mobilenet
   class_name: Mobilenet
-  config:
+
+score01:
+  module: src.models.score01
+  class_name: Score01

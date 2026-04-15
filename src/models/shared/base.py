@@ -1,8 +1,5 @@
 from pydantic import BaseModel, validate_call
-from typing import Any
-import keras
 from src.backend import tf
-import yaml
 
 # =============================================================================
 
@@ -25,53 +22,3 @@ class BaseAIModel(tf.keras.Model):
 
 
 # =============================================================================
-
-
-class ModelInfo(BaseModel):
-    module: str
-    class_name: str
-    config: dict[str, Any] | None = None
-
-
-def load_model(
-    model_name: str,
-    ds_info: BaseModel,
-):
-    from src.models import CUSTOM_OBJECTS
-
-    with open("config/models.yml", encoding="utf-8") as f:
-        c = yaml.safe_load(f)[model_name]
-    c = ModelInfo(**c)
-    config = {**ds_info.model_dump(), **(c.config or {})}
-    model = keras.saving.deserialize_keras_object(
-        {
-            "module": c.module,
-            "class_name": c.class_name,
-            "config": config,
-        },
-        custom_objects=CUSTOM_OBJECTS,
-    )
-    return model
-
-
-# =============================================================================
-
-
-class ImageProcessingDsInfo(BaseModel):
-    colored: bool
-    image_resolution: tuple[int, int]  # W x H
-
-    @property
-    def num_channels(self):
-        return 3 if self.colored else 1
-
-
-class ClassificationDsInfo(BaseModel):
-    num_classes: int
-
-
-class ImageClassificationDsInfo(ImageProcessingDsInfo, ClassificationDsInfo):
-    pass
-
-
-# -----------------------------------------------------------------------------

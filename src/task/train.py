@@ -3,14 +3,14 @@ import tensorflow as tf
 from typing import TypedDict, Unpack
 from src.backend import yaml
 from src.plot.classification import plot_classification_training_history
-from src.models.shared.base import ImageClassificationDsInfo
+from src.models.shared.dataset_info import ImageClassificationDsInfo
 from src.dataset.mnist import Mnist
 from tqdm.keras import TqdmCallback
 from datetime import datetime
 import os
 from pydantic import validate_call
 from src.backend.logging import logger
-from src.models.shared.base import load_model
+from src.models.api.load import load_model
 
 # =============================================================================
 
@@ -106,4 +106,4 @@ def train(
         image_resolution=full_ds.image_resolution,
     )
 
-    logger.success(f"Training completed. Model saved to {model_filepath}")
+    logger.info(f"Training completed. Model saved to {model_filepath}")
