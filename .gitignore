@@ -12,5 +12,8 @@
 /cmd/*
 !/cmd/*.example.sh
 
+## Tools
+/**/.vscode
+
 # Git Keep
 !/**/.gitkeep
