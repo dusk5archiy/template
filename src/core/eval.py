@@ -1,12 +1,12 @@
 import numpy as np
 from tqdm import tqdm
 import time
-from src.metrics.classification import calc_classification_metrics
+from .metrics.classification import calc_classification_metrics
 import os
 import yaml
 from src.dataset.mnist import Mnist
 from src.backend.logging import logger
-from src.task.inference import DotKerasInference, DotTfliteInference
+from .inference import DotKerasInference, DotTfliteInference
 from src.plot.classification import plot_evaluation_results
 
 
@@ -26,7 +26,9 @@ def evaluate(model_path: str):
 
     full_ds = Mnist(config=Mnist.Config())
     batch_size = 16
-    val_ds = full_ds.get_dataset(split="test", args=Mnist.SplitArgs(batch_size=batch_size))
+    val_ds = full_ds.get_dataset(
+        split="test", args=Mnist.SplitArgs(batch_size=batch_size)
+    )
 
     # Calculate precision, recall, and F1 score on validation set
     # Get model name from path
@@ -57,7 +59,7 @@ def evaluate(model_path: str):
             for img, lbl, pred in zip(batch_images, batch_labels, preds):
                 pred = int(pred)
                 lbl = int(lbl)
-                
+
                 elapsed = end_time - start_time
                 inference_times.append(elapsed)
 
@@ -93,7 +95,7 @@ def evaluate(model_path: str):
         path_base=f"{output_dir}/eval-{ext}",
         viz_images=viz_images,
         rows=rows,
-        cols=cols
+        cols=cols,
     )
 
     # Create metrics dict

@@ -1,6 +1,6 @@
 import argparse
 from src.config import InitialConfig
-from src.task.args import TaskArgParser
+from src.core import TaskArgParser
 
 if __name__ == "__main__":
     config = InitialConfig.load()

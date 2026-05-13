@@ -20,7 +20,7 @@ class TaskArgParser:
         eval_parser.add_argument("--model_path", "-m", type=str, required=True)
 
     def get_action(self, args: argparse.Namespace) -> Callable[[], None]:
-        from src.task.train import train
+        from .train import train
 
         # Return action based on mode
         if args.mode == "train":
@@ -30,7 +30,7 @@ class TaskArgParser:
                 epochs=args.epochs,
             )
         elif args.mode == "eval":
-            from src.task.eval import evaluate
+            from .eval import evaluate
 
             return lambda: evaluate(
                 model_path=args.model_path,

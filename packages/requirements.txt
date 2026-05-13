@@ -17,3 +17,5 @@ tqdm
 
 # Interactive Notebook
 ipykernel
+
+gdown
